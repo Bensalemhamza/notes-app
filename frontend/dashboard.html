@@ -7,18 +7,15 @@
   <script src="https://cdn.tailwindcss.com"></script>
 </head>
 <body class="bg-gray-50 font-sans">
-  <!-- Header -->
   <header class="flex items-center justify-between px-6 py-4 bg-white shadow">
     <div class="flex items-center space-x-2">
-      <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
-        <span class="text-white font-bold">L</span>
-      </div>
-      <span class="text-lg font-semibold text-gray-800">Logo here</span>
+      <img src="./images/icons/send-2.png" alt="">
     </div>
     <div class="flex items-center space-x-4">
-      <span id="name" class="text-gray-600 font-medium">Hamza Ben</span>
-      <button class="text-green-500 flex items-center">
-        Logout <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 ml-1">
+      <span id="name" class="text-gray-600 font-medium">Loading...</span>
+      <button id="logoutButton" class="text-green-500 flex items-center">
+        Logout
+        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 ml-1">
           <path stroke-linecap="round" stroke-linejoin="round" d="M15.75 9V5.25a2.25 2.25 0 00-2.25-2.25H6.75A2.25 2.25 0 004.5 5.25v13.5a2.25 2.25 0 002.25 2.25h6.75a2.25 2.25 0 002.25-2.25V15" />
           <path stroke-linecap="round" stroke-linejoin="round" d="M8.25 12h13.5m0 0l-3-3m3 3l-3 3" />
         </svg>
@@ -26,28 +23,26 @@
     </div>
   </header>
 
-  <!-- Main Content -->
   <main class="px-6 py-4">
-    <!-- Search Bar -->
-    <div class="relative mb-6">
-      <input id="searchBar" type="text" placeholder="Search notes" class="w-full px-4 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-green-500">
-      <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-5 h-5 absolute top-2.5 right-3 text-gray-400">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M17 10.5a6.5 6.5 0 11-13 0 6.5 6.5 0 0113 0z" />
-      </svg>
+    <div class="relative mb-4">
+      <input
+        id="searchInput"
+        type="text"
+        placeholder="Search notes by title or content"
+        class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+      />
     </div>
-
-    <!-- Filters -->
-    <div class="flex items-center space-x-2 mb-6">
-      <button id="filterAll" class="px-4 py-2 bg-green-500 text-white rounded-full">All</button>
-      <button id="filterPersonel" class="px-4 py-2 bg-gray-200 text-gray-700 rounded-full">personel</button>
-    </div>
-
-    <!-- Notes Grid -->
-    <div id="notesGrid" class="grid grid-cols-6 gap-4">
+    
+    <div id="notesGrid" class="grid grid-cols-6 gap-[10px]">
       <!-- Notes will be dynamically added here -->
     </div>
+    
+    <div class="flex justify-center space-x-2 mt-6" id="pagination">
+      <button id="prevPage" class="px-4 py-2 bg-gray-200 rounded-md">Previous</button>
+      <span id="currentPage" class="px-4 py-2">1</span>
+      <button id="nextPage" class="px-4 py-2 bg-gray-200 rounded-md">Next</button>
+    </div>
 
-    <!-- Add Note Button -->
     <a href="./addNote.html" id="addNoteBtn" class="fixed bottom-4 right-4 bg-green-500 text-white p-4 rounded-full shadow-lg">
       <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2" stroke="currentColor" class="w-6 h-6">
         <path stroke-linecap="round" stroke-linejoin="round" d="M12 4.5v15m7.5-7.5h-15" />
@@ -57,79 +52,137 @@
 
   <script>
     const notesGrid = document.getElementById('notesGrid');
-    const fullName = document.getElementById('name')
+    const fullName = document.getElementById('name');
 
-    async function fetchNotes() {
+    const BASE_URL = 'http://localhost:4000/api';
+
+    // Fetch user info
+    async function fetchUserInfo() {
       try {
-        const response = await fetch('https://localhost:4000/api/notes/');
-        const notes = await response.json();
-        renderNotes(notes);
-      } catch (error) {
-        console.error('Error fetching notes:', error);
-      }
-    }
-
-    function renderNotes(notes) {
-      notesGrid.innerHTML = '';
-      notes.forEach(note => {
-        const noteElement = document.createElement('div');
-        noteElement.className = 'bg-white border border-gray-200 rounded-lg p-4 shadow-sm';
-        noteElement.innerHTML = `
-          <div class="flex items-center justify-between mb-4">
-            <span class="text-sm font-semibold text-green-500">${note.category}</span>
-            <span class="text-sm text-gray-500">${note.date}</span>
-          </div>
-          <h2 class="text-lg font-semibold text-gray-800 mb-2">${note.title}</h2>
-          <p class="text-gray-600 text-sm mb-4">${note.description}</p>
-          <div class="flex items-center space-x-2">
-            ${(note.tags || []).map(tag => `<span class="bg-green-200 text-green-700 text-xs px-2 py-1 rounded-full">#${tag}</span>`).join('')}
-          </div>
-          <div class="mt-4 flex items-center space-x-2">
-            <button class="px-4 py-2 bg-green-500 text-white rounded">Edit</button>
-            <button class="px-4 py-2 bg-red-500 text-white rounded">Delete</button>
-          </div>
-        `;
-        notesGrid.appendChild(noteElement);
-      });
-    }
-
-    document.getElementById('addNoteBtn').addEventListener('click', async () => {
-      try {
-        const newNote = {
-          title: 'New Note',
-          description: 'This is a new note.',
-          category: 'General',
-          date: new Date().toLocaleDateString(),
-          tags: ['new', 'note']
-        };
-
-        const response = await fetch('https://your-backend-api/notes', {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify(newNote)
+        const response = await fetch(`${BASE_URL}/auth/users`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
         });
 
-        if (response.ok) {
-          fetchNotes();
-        } else {
-          console.error('Failed to add note');
-        }
+        if (!response.ok) throw new Error('Failed to fetch user info');
+
+        const user = await response.json();
+        fullName.textContent = `${user.firstname} ${user.lastname}`;
       } catch (error) {
-        console.error('Error adding note:', error);
+        console.error(error);
+        alert('Session expired. Please log in again.');
+        localStorage.removeItem('token');
+        window.location.href = '/login.html';
       }
+    }
+
+    // Fetch notes
+    let currentPage = 1;
+
+async function fetchNotes(searchQuery = '', page = 1) {
+  try {
+    const response = await fetch(`${BASE_URL}/notes?search=${encodeURIComponent(searchQuery)}&page=${page}`, {
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
     });
 
-    // Fetch initial notes
-    fetchNotes();
+    if (!response.ok) throw new Error('Failed to fetch notes');
 
-     // Example: Verify user is logged in
-     const token = localStorage.getItem('token');
-        if (!token) {
-            alert('You are not logged in!');
-            window.location.href = '/login.html'; // Redirect to login page
-        }
-  // </script>
+    const { notes, totalPages } = await response.json();
+    renderNotes(notes);
+
+    // Update pagination UI
+    document.getElementById('currentPage').innerText = page;
+    document.getElementById('prevPage').disabled = page <= 1;
+    document.getElementById('nextPage').disabled = page >= totalPages;
+
+    currentPage = page;
+  } catch (error) {
+    console.error('Error fetching notes:', error);
+  }
+}
+
+// Pagination Event Listeners
+document.getElementById('prevPage').addEventListener('click', () => fetchNotes('', currentPage - 1));
+document.getElementById('nextPage').addEventListener('click', () => fetchNotes('', currentPage + 1));
+
+// Event Listener for Search Input
+document.getElementById('searchInput').addEventListener('input', (e) => {
+  const query = e.target.value.trim();
+  fetchNotes(query);
+});
+
+async function deleteNote(noteId) {
+  try {
+    const response = await fetch(`${BASE_URL}/notes/${noteId}`, {
+      method: 'DELETE',
+      headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+    });
+
+    if (response.ok) {
+      alert('Note deleted successfully!');
+      
+      // Remove the deleted note from the dashboard
+      const noteElement = document.querySelector(`[data-note-id="${noteId}"]`);
+      if (noteElement) {
+        notesGrid.removeChild(noteElement);
+      }
+    } else {
+      throw new Error('Failed to delete note.');
+    }
+  } catch (error) {
+    console.error('Error deleting note:', error);
+  }
+}
+
+
+    // Render notes
+    function renderNotes(notes) {
+  notesGrid.innerHTML = ''; // Clear previous notes
+  notes.forEach((note) => {
+    const noteElement = document.createElement('div');
+    noteElement.className = 'bg-white shadow-md rounded-lg p-5 border border-gray-200 space-y-[10px]';
+    noteElement.setAttribute('data-note-id', note.id); // Add data attribute for easy identification
+    noteElement.innerHTML = `
+      <div class="flex justify-between items-center mb-2">
+          <span class="text-green-500 font-semibold text-sm">${note.category?.title || 'Uncategorized'}</span>
+          <span class="text-gray-400 text-xs">${new Date(note.createdAt).toLocaleDateString()}</span>
+      </div>
+      <h2 class="text-black font-bold text-lg mb-2">${note.title}</h2>
+      <p class="text-gray-600 text-[12px] leading-relaxed mb-3">${note.content || 'No content available.'}</p>
+      <div class="flex flex-wrap gap-2 mb-3">
+          ${note.tags
+              .map((tagNote) => `<span class="bg-green-200 text-green-700 text-[10px] px-2 py-1 rounded-full">#${tagNote.tag.name}</span>`)
+              .join('')}
+      </div>
+      <div class="flex justify-end gap-2">
+          <a href="/editNote.html?id=${note.id}" class="flex items-center gap-1 text-white bg-green-500 rounded-md px-3 py-1 text-xs hover:bg-green-300">
+            <img src="/images/icons/Edit Contained.png" alt=""> Edit
+          </a>
+          <button onclick="deleteNote('${note.id}')" class="flex items-center gap-1 bg-red-500 rounded-md px-3 py-1 text-xs hover:bg-red-400">
+            <img src="/images/icons/Trash 01.png" alt="">
+          </button>
+      </div>
+    `;
+    notesGrid.appendChild(noteElement);
+  });
+}
+
+
+    // Logout
+    document.getElementById('logoutButton').addEventListener('click', () => {
+      localStorage.removeItem('token');
+      window.location.href = '/login.html';
+    });
+
+    // Initialize page
+    const token = localStorage.getItem('token');
+    if (!token) {
+      alert('You are not logged in!');
+      window.location.href = '/login.html';
+    } else {
+      fetchUserInfo();
+      fetchNotes();
+    }
+  </script>
 </body>
 </html>
+

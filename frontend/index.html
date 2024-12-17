@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Document</title>
+</head>
+<body>
+    <div class="max-w-sm mx-auto bg-white shadow-md rounded-lg p-5 border border-gray-200">
+        <div class="flex justify-between items-center mb-2">
+          <span class="text-green-500 font-semibold text-sm">${note.category?.title || 'Uncategorized'}</span>
+          <span class="text-gray-400 text-xs">${new Date(note.createdAt).toLocaleDateString()}</span>
+        </div>
+        <h2 class="text-black font-bold text-lg mb-2">${note.title}</h2>
+        <p class="text-gray-600 text-sm leading-relaxed mb-3">${note.content || 'No content available.'}</p>
+        <div class="flex flex-wrap gap-2 mb-3">
+            ${note.tags
+                .map((tagNote) => `<span class="bg-green-200 text-green-700 text-xs px-2 py-1 rounded-full">#${tagNote.tag.name}</span>`)
+                .join('')}
+        </div>
+        <div class="flex justify-end gap-2">
+          <button onclick="editNote('${note.id}')" class="flex items-center gap-1 text-white bg-green-500 rounded-md px-3 py-1 text-xs hover:bg-green-300"><img src="/images/icons/Edit Contained.png" alt=""> Edit</button>
+          <a href="/editNote.html"><button onclick="deleteNote('${note.id}')" class="flex items-center gap-1 bg-red-500 rounded-md px-3 py-1 text-xs hover:bg-red-400"><img src="/images/icons/Trash 01.png" alt=""></button></a>
+        </div>
+       
+      </div>
+      
+</body>
+</html>

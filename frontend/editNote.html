@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Note</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-50 font-sans">
+  <!-- Header -->
+  <header class="flex items-center justify-between px-6 py-4 bg-white shadow">
+    <div class="flex items-center space-x-2">
+      <div class="w-6 h-6 bg-green-500 rounded-full flex items-center justify-center">
+        <span class="text-white font-bold">L</span>
+      </div>
+      <span class="text-lg font-semibold text-gray-800">Edit Note</span>
+    </div>
+    <button id="backButton" class="text-green-500">Back to Dashboard</button>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-3xl mx-auto mt-6 p-6 bg-white rounded-lg shadow-md">
+    <form id="editNoteForm" class="space-y-4">
+      <!-- Title Input -->
+      <div>
+        <label for="title" class="block text-gray-700 font-medium">Title</label>
+        <input
+          id="title"
+          type="text"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+          placeholder="Note Title"
+          required
+        />
+      </div>
+
+      <!-- Content Input -->
+      <div>
+        <label for="content" class="block text-gray-700 font-medium">Content</label>
+        <textarea
+          id="content"
+          rows="6"
+          class="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-green-500 focus:border-green-500"
+          placeholder="Note Content"
+          required
+        ></textarea>
+      </div>
+
+      <!-- Buttons -->
+      <div class="flex justify-end space-x-2">
+        <button
+          type="button"
+          id="cancelButton"
+          class="px-4 py-2 bg-gray-300 text-gray-800 rounded-md hover:bg-gray-400"
+        >
+          Cancel
+        </button>
+        <button
+          type="submit"
+          class="px-4 py-2 bg-green-500 text-white rounded-md hover:bg-green-600"
+        >
+          Save Changes
+        </button>
+      </div>
+    </form>
+  </main>
+
+  <script>
+    const BASE_URL = 'http://localhost:4000/api'; // Replace with your API base URL
+    const token = localStorage.getItem('token'); // Retrieve the token
+    const params = new URLSearchParams(window.location.search);
+    const noteId = params.get('id');
+
+    if (!token || !noteId) {
+      alert('Unauthorized access or missing note ID.');
+      window.location.href = '/login.html';
+    }
+
+    const form = document.getElementById('editNoteForm');
+    const titleInput = document.getElementById('title');
+    const contentInput = document.getElementById('content');
+
+    // Fetch note details to prepopulate the form
+    async function fetchNoteDetails() {
+      try {
+        const response = await fetch(`${BASE_URL}/notes/${noteId}`, {
+          headers: { Authorization: `Bearer ${token}` },
+        });
+
+        if (!response.ok) throw new Error('Failed to fetch note details');
+
+        const note = await response.json();
+
+        titleInput.value = note.title;
+        contentInput.value = note.content;
+      } catch (error) {
+        console.error('Error fetching note details:', error);
+        alert('Failed to load note details.');
+      }
+    }
+
+    // Update note
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+const title = document.getElementById('title').value.trim();
+const content = document.getElementById('content').value.trim();
+
+try {
+    const response = await fetch(`${BASE_URL}/notes/${noteId}`, {
+  method: 'PUT',
+  headers: {
+    'Content-Type': 'application/json',
+    Authorization: `Bearer ${localStorage.getItem('token')}`,
+  },
+  body: JSON.stringify({
+    title,
+    content,
+  }),
+});
+
+  if (!response.ok) throw new Error('Failed to update notee.');
+
+  alert('Note updated successfully!');
+  window.location.href = '/dashboard.html'; // Redirect after update
+} catch (error) {
+  console.error(error);
+  alert('Failed to update notee.');
+}
+    });
+
+    // Cancel button
+    document.getElementById('cancelButton').addEventListener('click', () => {
+      window.location.href = '/dashboard.html';
+    });
+
+    // Back button
+    document.getElementById('backButton').addEventListener('click', () => {
+      window.location.href = '/dashboard.html';
+    });
+
+    // Initialize page
+    fetchNoteDetails();
+  </script>
+</body>
+</html>
+

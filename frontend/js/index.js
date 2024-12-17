@@ -601,77 +601,77 @@ if (signUpForm) {
 }
 
 // Forgot Password Form Validation and Submission
-const forgotPasswordForm = document.getElementById('forgotPasswordForm');
-if (forgotPasswordForm) {
-    const forgotPasswordEmailInput = document.getElementById('forgotPasswordEmail');
+// const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+// if (forgotPasswordForm) {
+//     const forgotPasswordEmailInput = document.getElementById('forgotPasswordEmail');
 
-    forgotPasswordForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        clearAllErrors();
+//     forgotPasswordForm.addEventListener('submit', async (event) => {
+//         event.preventDefault();
+//         clearAllErrors();
 
-        if (validateInput(forgotPasswordEmailInput, forgotPasswordEmailInput.value.trim(), isValidEmail, 'Email is required.', 'Please enter a valid email address.')) {
-            try {
-                const response = await fetch(`${BASE_URL}/forgot-password`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ email: forgotPasswordEmailInput.value.trim() }),
-                });
+//         if (validateInput(forgotPasswordEmailInput, forgotPasswordEmailInput.value.trim(), isValidEmail, 'Email is required.', 'Please enter a valid email address.')) {
+//             try {
+//                 const response = await fetch(`${BASE_URL}/forgot-password`, {
+//                     method: 'POST',
+//                     headers: { 'Content-Type': 'application/json' },
+//                     body: JSON.stringify({ email: forgotPasswordEmailInput.value.trim() }),
+//                 });
 
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Reset link sent to your email!');
-                } else {
-                    displayError('forgotError', result.message || 'Failed to send reset link.');
-                }
-            } catch (error) {
-                displayError('forgotError', 'An error occurred. Please try again later.');
-            }
-        }
-    });
-}
+//                 const result = await response.json();
+//                 if (response.ok) {
+//                     alert('Reset link sent to your email!');
+//                 } else {
+//                     displayError('forgotError', result.message || 'Failed to send reset link.');
+//                 }
+//             } catch (error) {
+//                 displayError('forgotError', 'An error occurred. Please try again later.');
+//             }
+//         }
+//     });
+// }
 
 // Reset Password Form Validation and Submission
-const resetPasswordForm = document.getElementById('resetPasswordForm');
-if (resetPasswordForm) {
-    const resetPasswordInput = document.getElementById('resetPassword');
-    const resetConfirmPasswordInput = document.getElementById('resetConfirmPassword');
+// const resetPasswordForm = document.getElementById('resetPasswordForm');
+// if (resetPasswordForm) {
+//     const resetPasswordInput = document.getElementById('resetPassword');
+//     const resetConfirmPasswordInput = document.getElementById('resetConfirmPassword');
 
-    resetPasswordForm.addEventListener('submit', async (event) => {
-        event.preventDefault();
-        clearAllErrors();
+//     resetPasswordForm.addEventListener('submit', async (event) => {
+//         event.preventDefault();
+//         clearAllErrors();
 
-        let formHasError = false;
+//         let formHasError = false;
 
-        if (!validateInput(resetPasswordInput, resetPasswordInput.value.trim(), (val) => val.length >= 6, 'Password is required.', 'Password must be at least 6 characters.')) {
-            formHasError = true;
-        }
+//         if (!validateInput(resetPasswordInput, resetPasswordInput.value.trim(), (val) => val.length >= 6, 'Password is required.', 'Password must be at least 6 characters.')) {
+//             formHasError = true;
+//         }
 
-        if (!validateInput(resetConfirmPasswordInput, resetConfirmPasswordInput.value.trim(), (val) => val === resetPasswordInput.value.trim(), 'Please confirm your password.', 'Passwords do not match.')) {
-            formHasError = true;
-        }
+//         if (!validateInput(resetConfirmPasswordInput, resetConfirmPasswordInput.value.trim(), (val) => val === resetPasswordInput.value.trim(), 'Please confirm your password.', 'Passwords do not match.')) {
+//             formHasError = true;
+//         }
 
-        if (!formHasError) {
-            try {
-                const token = prompt('Enter your reset token:'); // Collect the token (from URL or email)
+//         if (!formHasError) {
+//             try {
+//                 const token = prompt('Enter your reset token:'); // Collect the token (from URL or email)
 
-                const response = await fetch(`${BASE_URL}/reset-password`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({
-                        token,
-                        newPassword: resetPasswordInput.value.trim()
-                    }),
-                });
+//                 const response = await fetch(`${BASE_URL}/reset-password`, {
+//                     method: 'POST',
+//                     headers: { 'Content-Type': 'application/json' },
+//                     body: JSON.stringify({
+//                         token,
+//                         newPassword: resetPasswordInput.value.trim()
+//                     }),
+//                 });
 
-                const result = await response.json();
-                if (response.ok) {
-                    alert('Password reset successful!');
-                } else {
-                    displayError('resetError', result.message || 'Password reset failed.');
-                }
-            } catch (error) {
-                displayError('resetError', 'An error occurred. Please try again later.');
-            }
-        }
-    });
-}
+//                 const result = await response.json();
+//                 if (response.ok) {
+//                     alert('Password reset successful!');
+//                 } else {
+//                     displayError('resetError', result.message || 'Password reset failed.');
+//                 }
+//             } catch (error) {
+//                 displayError('resetError', 'An error occurred. Please try again later.');
+//             }
+//         }
+//     });
+// }
